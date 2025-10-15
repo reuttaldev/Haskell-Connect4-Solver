@@ -1,12 +1,24 @@
-At each turn, the player choses an action. An action is a column from 1-7 to drop your piece in. 
-The change will be visualized by adding a X piece to the player's turn and O piece for the system turn.
-The player chooses an action by providing the index (starting from 1) to standard input. 
-The system chooses its action using alpha-beta approach. 
+## Introduction
 
-For efficiently check whether 4 tokens are connected, the board is represented as a (H+1)*W long bitstring.
-Each bit correspond to a position on the board, starting from the bottom of each column and moving upwards. The first column is the left one.
-We use two of these bitstrings: one to encode the position of the player, and another to encode the position of both the player and the computer (mask).
-The positions of only the computer can then be quickly computed using the XOR-operator.
+In this project, I implement an AI-solver for the classic [Connect Four](https://en.wikipedia.org/wiki/Connect_Four) childhood game using Haskell.  
+The game rules are simple:  
+At each turn, the player choses an action -- an action is a column from 1-7 to drop your piece in. 
+The first player to have 4 pieces in a row, either vertically, horizontally or diagonally is the winner.
+
+Each player's turn is visualized by adding a X piece to the player's turn and O piece for the system turn.
+The player chooses an action by providing the index (starting from 1) to standard input. 
+
+## Demo
+[![Watch the demo on Google Drive](https://drive.google.com/thumbnail?id=1Stty913sr39FkD6PDKv5SFuiUgo710u7&sz=w1200-h675)](https://drive.google.com/file/d/1Stty913sr39FkD6PDKv5SFuiUgo710u7/view?usp=sharing)
+
+## Implementation
+
+The AI agent chooses its action using alpha-beta approach. 
+
+To efficiently check whether 4 tokens are connected, the board is represented as a (H+1)*W long bitstring.
+Each bit correspond to a position on the board, starting from the bottom of each column and moving upwards. The first column is the left one.  
+We use two of these bitstrings: one to encode the position of the player, and another to encode the position of both the player and the computer (mask).  
+The positions of only the computer can then be quickly computed using the XOR-operator.  
 We add an extra row of bits to the array in order to clearly distinguish between the top and bottom rows. This helps prevent false positive when checking for vertical sequences.
 
 This is how I check whether four tokens are connected horizontally:
@@ -24,15 +36,18 @@ Each game tree node (game state) is scored as follows, assuming both sides play 
 a - 22 if the opponent can win
 where a is the number of pieces used by the winner at the end of the game
 
-Since we cannot assign a score when the game has not finished, we explore the tree until we reach a leaf node and propagate this score back upwards to the root.
+Since we cannot assign a score when the game has not finished, we explore the tree until we reach a leaf node and propagate this score back upwards to the root.  
 At each internal node, we choose the maximum value from its children. 
 
 Since exploring the entire search tree is not feasible, I use alpha-beta approach.
 Additionally, I applied a iterative deepening & null window search approach & hash table to store the upper bound for a given game state. Without it the search is still not feasible.
 
-To start the project, write: 
-cabal run
 
-Resources: 
+## How to run 
+To start the project, write the following command in the main directory: 
+`cabal run`
+
+## Resources:
+
 http://blog.gamesolver.org/solving-connect-four/02-test-protocol/
 https://towardsdatascience.com/creating-the-perfect-connect-four-ai-bot-c165115557b0

@@ -52,10 +52,12 @@ nullWindowSearchForAllOptions (a:al) gameState min max table =
         (resultList,table'') = nullWindowSearchForAllOptions al gameState min max table'
     in ((a,score):resultList, table'')
 
+
 nullWindowSearch :: GameState -> Int -> Int -> TranspositionTable-> (Score, TranspositionTable)
 nullWindowSearch gameState min max table
     | min >= max = (min ,table)
     | otherwise  =
+        -- iteratively narrow the min-max exploration window
         let mid = min + ((max - min) `div` 2)
             mid'
                 | mid <= 0 && min `div` 2 < mid = min `div` 2
@@ -74,7 +76,7 @@ negamax (GameState position mask actionCounter) player alpha beta table
     | nonLosingActions == [] = (negate score, table)
     -- player has not won and we are not in a terminal node; recurse. 
     | otherwise= 
-        -- if we changed beta to be lower and now alpha is already bigger than it, we are done. return beta 
+        -- if we changed beta to be lower and now alpha is already bigger than it, we are done because the search window is empty. return beta 
         if beta' /= beta && alpha >= beta' then (beta',table)
         --  compute the score of all possible next moves by recursively reaching a terminal node, and keep the best one 
         else exploreTree gameState player nonLosingActions alpha beta' table
